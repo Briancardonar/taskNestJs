@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  prueba:
+    container_name: prueba
+    image: prueba
+    build:
+      context: .
+      target: development
+      dockerfile: ./Dockerfile
+    command: yarn start:dev
+    ports:
+      - ${APP_PORT:-3000}:${APP_PORT:-3000}
+    networks:
+      - prueba_net
+    volumes:
+      - .:/app
+      - prueba:/app/node_modules
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    command: mongod --port 27017
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongodb:/data/db
+    networks:
+      - prueba_net
+
+volumes:
+  prueba:
+  mongodb:
+
+networks:
+  prueba_net:
