@@ -15,7 +15,10 @@ import { CreateService } from './services/create.service';
 
 @Controller('tasks')
 export class TasksController {
-  constructor(@InjectModel(Task.name) private taskModel: Model<Task>) {}
+  constructor(
+    @InjectModel(Task.name) private readonly taskModel: Model<Task>,
+    private readonly createService: CreateService,
+  ) {}
 
   @Get()
   async getTasks(): Promise<Model<Task>[]> {
@@ -24,8 +27,7 @@ export class TasksController {
 
   @Post()
   async createTask(@Body() task: createTaskDto) {
-    const createService = new CreateService(this.taskModel);
-    createService.createTask(task);
+    this.createService.createTask(task);
   }
 
   @Put('/:id')
